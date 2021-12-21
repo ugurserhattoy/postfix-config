@@ -1,13 +1,27 @@
 #!/bin/bash
-##############################################################################
 ######################################u#s#t###################################
-# variables
+# variables----
 fqdname=`hostname -f`
-relayHost=smpt.domain.com
+distro=`hostnamectl | grep -i system | cut -d ":" -f 2 | tr '[:upper:]' '[:lower:]'`
+# replace example.domain.com with your local smtp server
+relayHost=example.domain.com
 
+ls /etc/postfix/main.cf
+if [ $? -ne 1 ]
+then
+    if [ -z "${distro##*"debian"*}" ] || [ -z "${distro##*"ubuntu"*}" ]
+    then
+        apt-get install postfix
+    elif [ -z "${distro##*"suse"*}" ] 
+    then
+        sudo zypper --non-interactive install postfix
+    else
+        sudo yum -y install postfix
+    fi
+fi
 # backup main.cf
 cp -vp /etc/postfix/main.cf /etc/postfix/main.cf.bkp
-echo "main.cf | backed up"
+echo "main.cf | backed up as /etc/postfix/main.cf.bkp"
 
 # set relayhost
 sed -i "s/^relayhost = .*/relayhost = $relayHost/" /etc/postfix/main.cf
@@ -20,4 +34,3 @@ echo "."
 echo ".."
 echo "...completed"
 ########################################u#s#t#################################
-##############################################################################
