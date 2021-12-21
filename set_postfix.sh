@@ -6,6 +6,7 @@ distro=`hostnamectl | grep -i system | cut -d ":" -f 2 | tr '[:upper:]' '[:lower
 # replace example.domain.com with your local smtp server
 relayHost=example.domain.com
 
+# check if postfix installed; otherwise install
 ls /etc/postfix/main.cf
 if [ $? -ne 1 ]
 then
